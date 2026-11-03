@@ -24,59 +24,45 @@
   </script>
 
   <style>
-    /* ১. একুশে লালসালু রেগুলার (সাধারণ বডি টেক্সটের জন্য) */
     @font-face {
       font-family: 'EkusheyLalsalu';
       src: url('fonts/EkusheyLalsalu-Regular.ttf') format('truetype');
       font-weight: normal;
-      font-style: normal;
     }
-
-    /* ২. একুশে লালসালু বোল্ড (গুরুত্বপূর্ণ লেখার জন্য) */
     @font-face {
       font-family: 'EkusheyLalsalu';
       src: url('fonts/EkusheyLalsalu-Bold.ttf') format('truetype');
       font-weight: bold;
-      font-style: normal;
     }
-
-    /* ৩. সূর্য ফন্ট (শুধুমাত্র সকল হেডলাইন ও শিরোনামের জন্য) */
     @font-face {
       font-family: 'Shurjo';
       src: url('fonts/Shurjo.ttf') format('truetype');
       font-weight: normal;
-      font-style: normal;
     }
 
-    /* পুরো ওয়েবসাইটের সাধারণ লেখার জন্য লালসালু রেগুলার */
-    body, p, span, a, input, textarea, button {
+    body, p, span, a, input, textarea, button, select {
       font-family: 'EkusheyLalsalu', sans-serif !important;
       font-weight: normal;
       -webkit-tap-highlight-color: transparent;
     }
 
-    /* ওয়েবসাইটের সব হেডলাইন ও শিরোনামের জন্য সূর্য ফন্ট */
     h1, h2, h3, h4, h5, h6, .font-headline {
       font-family: 'Shurjo', sans-serif !important;
       letter-spacing: 0.3px;
     }
 
-    /* যেকোনো গুরুত্বপূর্ণ টেক্সট (Bold) স্বয়ংক্রিয়ভাবে একুশে লালসালু বোল্ড পাবে */
     b, strong, .font-bold {
       font-family: 'EkusheyLalsalu', sans-serif !important;
       font-weight: bold !important;
     }
 
-    /* হাই-রেজোলিউশন লোগো ক্রিস্টাল ক্লিয়ার রেন্ডারিং স্টাইল */
     .brand-logo-sharp {
       image-rendering: -webkit-optimize-contrast;
       image-rendering: crisp-edges;
       transform: translateZ(0);
       backface-visibility: hidden;
-      will-change: transform;
     }
 
-    /* স্ক্রোলিং টিকার অ্যানিমেশন */
     .ticker-scroll {
       display: inline-block;
       white-space: nowrap;
@@ -88,16 +74,16 @@
     }
   </style>
 </head>
-<body class="bg-black text-slate-100 min-h-screen pb-12 antialiased selection:bg-brand-red selection:text-white">
+<body class="bg-black text-slate-100 min-h-screen pb-16 antialiased selection:bg-brand-red selection:text-white">
 
   <!-- ১. সাম্প্রতিক ব্রেকিং টিকার -->
-  <div class="bg-brand-red text-white flex items-center h-9 text-xs sm:text-sm overflow-hidden border-b border-red-700">
+  <div class="bg-brand-red text-white flex items-center h-9 text-xs sm:text-sm overflow-hidden border-b border-red-700 sticky top-0 z-50">
     <div class="bg-red-800 px-3 py-2 flex items-center gap-1.5 shrink-0 z-10 shadow-md">
       <span class="w-2 h-2 rounded-full bg-white animate-pulse"></span>
       <span class="font-bold">সাম্প্রতিক</span>
     </div>
     <div class="overflow-hidden w-full relative flex items-center">
-      <div class="ticker-scroll flex items-center gap-8 pl-4">
+      <div id="liveTicker" class="ticker-scroll flex items-center gap-8 pl-4">
         <span>নোয়াখালীর সকল সংবাদ এক্সপ্রেস গতিতে পেতে যুক্ত থাকুন আমাদের সাথে</span>
         <span>•</span>
         <span>মাইজদীতে নতুন সড়ক উন্নয়ন প্রকল্পের কাজ দ্রুত এগিয়ে চলছে</span>
@@ -109,28 +95,31 @@
     </div>
   </div>
 
-  <!-- ২. মূল হেডার (লোগো ও অ্যাকশন বাটন) -->
-  <header class="bg-white text-slate-900 border-b border-slate-200 sticky top-0 z-40 shadow-sm">
-    <div class="max-w-2xl mx-auto px-4 py-3 flex items-center justify-between">
-      
-      <!-- বড় ও প্রমিনেন্ট লোগো -->
+  <!-- ২. মূল হেডার -->
+  <header class="bg-white text-slate-900 border-b border-slate-200 z-40 shadow-sm">
+    <div class="max-w-2xl mx-auto px-4 py-2.5 flex items-center justify-between">
       <div class="flex flex-col items-start">
         <img src="logo.png" 
              alt="নোয়াখালী এক্সপ্রেস" 
-             style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges; transform: translateZ(0);" 
-             class="h-16 sm:h-20 w-auto object-contain self-start -my-1 brand-logo-sharp">
-        <span class="text-xs sm:text-sm text-slate-700 font-bold tracking-tight mt-1">নোয়াখালীর সকল সংবাদ এক্সপ্রেস গতিতে</span>
+             class="h-14 sm:h-16 w-auto object-contain self-start brand-logo-sharp">
+        <span class="text-xs text-slate-700 font-bold tracking-tight mt-0.5">নোয়াখালীর সকল সংবাদ এক্সপ্রেস গতিতে</span>
       </div>
 
       <div class="flex items-center gap-2">
-        <button onclick="toggleModal()" class="flex items-center gap-1.5 px-3.5 py-2 bg-brand-green hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-full shadow transition-all">
+        <!-- লেখা জমা বাটন -->
+        <button onclick="toggleModal('submissionModal')" class="flex items-center gap-1.5 px-3.5 py-1.5 bg-brand-green hover:bg-emerald-700 text-white text-xs sm:text-sm font-bold rounded-full shadow transition-all">
           <i class="ph ph-pen-nib text-sm"></i>
           <span>লেখা জমা দিন</span>
+        </button>
+
+        <!-- মোবাইল অ্যাডমিন বাটন -->
+        <button onclick="openAdmin()" class="p-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full text-base transition-all" title="অ্যাডমিন লগইন">
+          <i class="ph ph-user-circle-gear"></i>
         </button>
       </div>
     </div>
 
-    <!-- ৩. ক্যাটাগরি মেনু বার -->
+    <!-- ক্যাটাগরি মেনু বার -->
     <div class="bg-zinc-900 text-white border-t border-zinc-800 py-2 px-3">
       <div class="max-w-2xl mx-auto flex items-center gap-2 overflow-x-auto text-xs whitespace-nowrap">
         <button class="px-3 py-1 rounded-full bg-white text-black font-bold shrink-0">সর্বশেষ</button>
@@ -145,33 +134,28 @@
     </div>
   </header>
 
-  <!-- ৪. মূল নিউজ ফিড (ফেসবুক স্টাইল ৪:৫ লেআউট) -->
-  <main class="max-w-2xl mx-auto px-3 sm:px-4 mt-4 space-y-6">
+  <!-- ৩. মূল নিউজ ফিড (ডাইনামিক কনটেইনার) -->
+  <main id="newsFeedContainer" class="max-w-2xl mx-auto px-3 sm:px-4 mt-4 space-y-6">
 
-    <!-- নিউজ কার্ড ১ -->
-    <article class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-xl">
+    <!-- ডিফল্ট নিউজ ১ -->
+    <article class="bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-xl" data-news-id="1">
       <div class="p-4">
-        <!-- হেডলাইনে সূর্য ফন্ট -->
-        <h2 class="text-xl sm:text-2xl text-white leading-snug cursor-pointer hover:text-emerald-400 transition" onclick="openNewsModal()">
+        <h2 class="text-xl sm:text-2xl text-white leading-snug cursor-pointer hover:text-emerald-400 transition" onclick="showNewsDetail(1)">
           নোয়াখালীতে আধুনিক যোগাযোগ ব্যবস্থার নতুন মাইলফলক: চার লেনের সংযোগ সড়ক চালু
         </h2>
-        
-        <!-- মূল লেখায় লালসালু রেগুলার এবং বিশেষ অংশে লালসালু বোল্ড -->
         <p class="text-base text-zinc-300 mt-2.5 leading-relaxed">
-          মাইজদী থেকে চৌমুহনী পর্যন্ত সড়কের উন্নয়ন কাজ দ্রুত শেষ হয়েছে। <b>সড়ক পরিবহন কর্তৃপক্ষের তথ্যমতে,</b> আগামী মাসের শুরুতেই এটি সাধারণ যানবাহনের জন্য সম্পূর্ণ উন্মুক্ত করে দেওয়া হবে। স্থানীয় বাসিন্দারা জানিয়েছেন এই নতুন উদ্যোগের ফলে দীর্ঘদিনের যানজট সমস্যার <b>স্থায়ী সমাধান</b> মিলবে...
-          <button onclick="openNewsModal()" class="text-emerald-400 font-bold ml-1 hover:underline">...বিস্তারিত পড়ুন</button>
+          মাইজদী থেকে চৌমুহনী পর্যন্ত সড়কের উন্নয়ন কাজ দ্রুত শেষ হয়েছে। <b>সড়ক পরিবহন কর্তৃপক্ষের তথ্যমতে,</b> আগামী মাসের শুরুতেই এটি সাধারণ যানবাহনের জন্য সম্পূর্ণ উন্মুক্ত করে দেওয়া হবে...
+          <button onclick="showNewsDetail(1)" class="text-emerald-400 font-bold ml-1 hover:underline">...বিস্তারিত পড়ুন</button>
         </p>
       </div>
       
-      <!-- ৪:৫ অনুপাতের পোস্টার ছবি -->
-      <div class="aspect-[4/5] bg-zinc-900 w-full overflow-hidden cursor-pointer" onclick="openNewsModal()">
+      <div class="aspect-[4/5] bg-zinc-900 w-full overflow-hidden cursor-pointer" onclick="showNewsDetail(1)">
         <img src="https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?w=800&auto=format&fit=crop&q=80" alt="News Image" class="w-full h-full object-cover">
       </div>
 
-      <!-- কপি লিংক বার -->
       <div class="p-3 bg-zinc-900/60 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-400">
-        <span class="flex items-center gap-1.5"><i class="ph ph-clock"></i> ১৫ মিনিট আগে</span>
-        <button onclick="copyCurrentLink()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition">
+        <span class="flex items-center gap-1.5"><i class="ph ph-clock"></i> কিছুক্ষণ আগে</span>
+        <button onclick="copyOnlyLink()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition">
           <i class="ph ph-link-simple text-sm"></i>
           <span>কপি লিংক</span>
         </button>
@@ -180,106 +164,392 @@
 
   </main>
 
-  <!-- ৫. বিস্তারিত নিউজ রিডার মডাল -->
+  <!-- ৪. বিস্তারিত নিউজ রিডার মডাল (কপি লিংক ও কপি নিউজ সহ) -->
   <div id="newsDetailModal" class="fixed inset-0 bg-black/90 backdrop-blur-md z-50 hidden overflow-y-auto p-4 sm:p-6">
     <div class="max-w-2xl mx-auto bg-zinc-950 border border-zinc-800 rounded-2xl p-5 text-white shadow-2xl my-6">
+      
       <div class="flex justify-between items-center pb-3 border-b border-zinc-800">
-        <span class="text-xs text-emerald-400 font-bold px-2.5 py-1 bg-emerald-950/60 border border-emerald-800/60 rounded-full">নোয়াখালী এক্সপ্রেস ডেস্ক</span>
-        <button onclick="closeNewsModal()" class="text-zinc-400 hover:text-white text-2xl font-bold px-2">✕</button>
+        <span id="modalCategory" class="text-xs text-emerald-400 font-bold px-2.5 py-1 bg-emerald-950/60 border border-emerald-800/60 rounded-full">নোয়াখালী এক্সপ্রেস ডেস্ক</span>
+        <button onclick="toggleModal('newsDetailModal')" class="text-zinc-400 hover:text-white text-2xl font-bold px-2">✕</button>
       </div>
 
-      <h1 class="text-2xl sm:text-3xl text-white mt-4 leading-tight">
-        নোয়াখালীতে আধুনিক যোগাযোগ ব্যবস্থার নতুন মাইলফলক: চার লেনের সংযোগ সড়ক চালু
-      </h1>
+      <h1 id="modalHeadline" class="text-2xl sm:text-3xl text-white mt-4 leading-tight"></h1>
       
       <div class="text-xs text-zinc-400 mt-2 mb-4 flex items-center gap-3">
-        <span>নিজস্ব প্রতিবেদক, নোয়াখালী</span>
+        <span id="modalReporter">নিজস্ব প্রতিবেদক, নোয়াখালী</span>
         <span>•</span>
-        <span>প্রকাশ: ৩ নভেম্বর ২০২৬</span>
+        <span id="modalTime">আজকের তাজা খবর</span>
       </div>
 
       <div class="aspect-[4/5] bg-zinc-900 w-full rounded-xl overflow-hidden mb-5">
-        <img src="https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?w=800&auto=format&fit=crop&q=80" alt="News Image" class="w-full h-full object-cover">
+        <img id="modalImage" src="" alt="News Image" class="w-full h-full object-cover">
       </div>
 
-      <div class="text-base text-zinc-200 space-y-4 leading-relaxed">
-        <p>
-          মাইজদী থেকে চৌমুহনী পর্যন্ত সড়কের উন্নয়ন কাজ দ্রুত শেষ হয়েছে। <b>সড়ক পরিবহন কর্তৃপক্ষের তথ্যমতে,</b> আগামী মাসের শুরুতেই এটি সাধারণ যানবাহনের জন্য সম্পূর্ণ উন্মুক্ত করে দেওয়া হবে।
-        </p>
-        <p>
-          প্রকল্প পরিচালক জানিয়েছেন, এই সড়কে আধুনিক ড্রেনেজ ব্যবস্থা ও ডিভাইডারের পাশে লাইটিং স্থাপন করা হয়েছে। <b>সবচেয়ে বড় পরিবর্তন এসেছে</b> সোনাপুর-চৌমুহনী সংযোগ মোড়ে, যেখানে পূর্বে প্রতিদিন ঘণ্টার পর ঘণ্টা যানজট লেগে থাকত।
-        </p>
-        <p>
-          স্থানীয় ব্যবসায়ীরা জানিয়েছেন, সড়কটি সম্পূর্ণ চালু হলে পণ্য পরিবহনে সময় অর্ধেকে নেমে আসবে এবং জেলার অভ্যন্তরীণ ব্যবসা-বাণিজ্যে নতুন গতি সঞ্চার হবে।
-        </p>
-      </div>
+      <div id="modalBody" class="text-base text-zinc-200 space-y-4 leading-relaxed whitespace-pre-line"></div>
 
-      <div class="mt-6 pt-4 border-t border-zinc-800 flex justify-end">
-        <button onclick="closeNewsModal()" class="px-5 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg text-sm font-bold">
+      <!-- কপি লিংক ও কপি নিউজ বাটন বার -->
+      <div class="mt-6 pt-4 border-t border-zinc-800 flex flex-wrap items-center justify-between gap-3">
+        <div class="flex items-center gap-2">
+          <button onclick="copyOnlyLink()" class="flex items-center gap-2 px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-white rounded-lg text-xs sm:text-sm font-bold transition">
+            <i class="ph ph-link text-base text-emerald-400"></i>
+            <span>কপি লিংক</span>
+          </button>
+          
+          <button onclick="copyFullNews()" class="flex items-center gap-2 px-4 py-2 bg-brand-green hover:bg-emerald-700 text-white rounded-lg text-xs sm:text-sm font-bold transition">
+            <i class="ph ph-copy text-base"></i>
+            <span>কপি নিউজ</span>
+          </button>
+        </div>
+
+        <button onclick="toggleModal('newsDetailModal')" class="px-4 py-2 bg-zinc-900 border border-zinc-700 hover:bg-zinc-800 text-zinc-300 rounded-lg text-xs sm:text-sm font-bold">
           বন্ধ করুন
         </button>
       </div>
     </div>
   </div>
 
-  <!-- ৬. আপনার লেখা জমা দিন মডাল -->
-  <div id="submissionModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
-    <div class="bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-lg p-5 text-white">
+  <!-- ৫. আপনার লেখা জমা দিন মডাল (একাধিক ছবি আপলোড সহ) -->
+  <div id="submissionModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 overflow-y-auto">
+    <div class="bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-lg p-5 text-white my-auto max-h-[90vh] overflow-y-auto">
       <div class="flex items-center justify-between pb-3 border-b border-zinc-800">
         <h3 class="font-bold text-base flex items-center gap-2">
-          <i class="ph ph-pen-nib text-emerald-500"></i> আপনার লেখা পাঠান
+          <i class="ph ph-pen-nib text-emerald-500"></i> আপনার লেখা ও ছবি পাঠান
         </h3>
-        <button onclick="toggleModal()" class="text-zinc-400 hover:text-white text-lg">✕</button>
+        <button onclick="toggleModal('submissionModal')" class="text-zinc-400 hover:text-white text-lg">✕</button>
       </div>
-      <form onsubmit="handleSubmit(event)" class="mt-4 space-y-3 text-xs sm:text-sm">
+
+      <form onsubmit="handleCitizenSubmission(event)" class="mt-4 space-y-3.5 text-xs sm:text-sm">
         <div>
-          <label class="block text-zinc-300 mb-1">আপনার নাম</label>
-          <input type="text" required placeholder="পুরো নাম লিখুন" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
+          <label class="block text-zinc-300 mb-1">আপনার নাম *</label>
+          <input type="text" id="subName" required placeholder="পুরো নাম লিখুন" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
         </div>
         <div>
-          <label class="block text-zinc-300 mb-1">হোয়াটসঅ্যাপ নম্বর (পাবলিশ হলে লিংক পাঠানো হবে)</label>
-          <input type="tel" required placeholder="017XXXXXXXX" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
+          <label class="block text-zinc-300 mb-1">হোয়াটসঅ্যাপ নম্বর (খবর প্রকাশ হলে লিংক পাবেন) *</label>
+          <input type="tel" id="subPhone" required placeholder="01XXXXXXXXX" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
         </div>
         <div>
-          <label class="block text-zinc-300 mb-1">সংবাদের শিরোনাম</label>
-          <input type="text" required placeholder="খবরের মূল বিষয়" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
+          <label class="block text-zinc-300 mb-1">সংবাদের বিষয় / শিরোনাম *</label>
+          <input type="text" id="subTitle" required placeholder="খবরের মূল বিষয়" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
         </div>
         <div>
-          <label class="block text-zinc-300 mb-1">বিস্তারিত প্রতিবেদন বা মতামত</label>
-          <textarea rows="4" required placeholder="এখানে বিস্তারিত লিখুন..." class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500"></textarea>
+          <label class="block text-zinc-300 mb-1">বিস্তারিত প্রতিবেদন বা মতামত *</label>
+          <textarea id="subBody" rows="4" required placeholder="ঘটনার স্থান, সময় ও বিস্তারিত তথ্য লিখুন..." class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500"></textarea>
         </div>
+
+        <!-- ছবি আপলোড অপশন (সর্বোচ্চ ৩টি) -->
+        <div>
+          <label class="block text-zinc-300 mb-1">ঘটনার ছবি বা আপনার ছবি (সর্বোচ্চ ৩টি)</label>
+          <input type="file" id="subImages" accept="image/*" multiple onchange="previewCitizenImages(event)" class="w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-zinc-800 file:text-emerald-400 hover:file:bg-zinc-700 cursor-pointer">
+          <p class="text-[11px] text-zinc-400 mt-1">ক্যামেরা দিয়ে সরাসরি ছবি তুলে বা গ্যালারি থেকে সিলেক্ট করুন।</p>
+          <div id="citizenImagePreviews" class="flex items-center gap-2 mt-2 overflow-x-auto"></div>
+        </div>
+
         <button type="submit" class="w-full bg-brand-green hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg transition mt-2">
-          লেখাটি জমা দিন
+          লেখা ও ছবি জমা দিন
         </button>
       </form>
     </div>
   </div>
 
-  <!-- কপি নোটিফিকেশন টোস্ট -->
+  <!-- ৬. মোবাইল অ্যাডমিন লগইন মডাল -->
+  <div id="adminLoginModal" class="fixed inset-0 bg-black/85 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-zinc-900 border border-zinc-700 rounded-2xl w-full max-w-sm p-6 text-white text-center">
+      <div class="w-12 h-12 rounded-full bg-emerald-950/60 border border-emerald-800 text-emerald-400 flex items-center justify-center mx-auto text-2xl mb-3">
+        <i class="ph ph-lock-key"></i>
+      </div>
+      <h3 class="text-lg font-bold">নোয়াখালী এক্সপ্রেস অ্যাডমিন</h3>
+      <p class="text-xs text-zinc-400 mt-1">মোবাইল থেকে সরাসরি নিউজ প্রকাশের জন্য লগইন করুন</p>
+
+      <form onsubmit="handleAdminLogin(event)" class="mt-5 space-y-3 text-left text-xs sm:text-sm">
+        <div>
+          <label class="block text-zinc-300 mb-1">ইউজারনেম বা মোবাইল নম্বর</label>
+          <input type="text" id="adminUser" required placeholder="admin" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-zinc-300 mb-1">পাসওয়ার্ড</label>
+          <input type="password" id="adminPass" required placeholder="••••••••" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+        <button type="submit" class="w-full bg-brand-green hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg transition mt-2">
+          লগইন করুন
+        </button>
+        <button type="button" onclick="toggleModal('adminLoginModal')" class="w-full py-2 text-zinc-400 hover:text-white text-xs">
+          বাতিল
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ৭. মোবাইল সরাসরি নিউজ পোস্টিং প্যানেল (লগইন করার পর দেখা যাবে) -->
+  <div id="adminPublishPanel" class="fixed inset-0 bg-black/95 z-50 hidden overflow-y-auto p-4 sm:p-6">
+    <div class="max-w-xl mx-auto bg-zinc-900 border border-zinc-700 rounded-2xl p-5 text-white shadow-2xl my-4">
+      <div class="flex items-center justify-between pb-3 border-b border-zinc-800">
+        <div>
+          <h3 class="text-base font-bold text-emerald-400 flex items-center gap-1.5">
+            <i class="ph ph-newspaper"></i> নতুন নিউজ প্রকাশ প্যানেল
+          </h3>
+          <p class="text-[11px] text-zinc-400">মোবাইল থেকে পোস্ট করলেই সাইটে লাইভ হবে</p>
+        </div>
+        <button onclick="logoutAdmin()" class="px-3 py-1 bg-red-950 border border-red-800 text-red-400 hover:bg-red-900 rounded-lg text-xs font-bold">
+          লগআউট
+        </button>
+      </div>
+
+      <form onsubmit="handleDirectPublish(event)" class="mt-4 space-y-3.5 text-xs sm:text-sm">
+        <div>
+          <label class="block text-zinc-300 mb-1">সংবাদের শিরোনাম (সূর্য ফন্ট পাবে) *</label>
+          <input type="text" id="postTitle" required placeholder="আকর্ষণীয় শিরোনাম লিখুন..." class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500 font-bold">
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+          <div>
+            <label class="block text-zinc-300 mb-1">বিভাগ / ক্যাটাগরি *</label>
+            <select id="postCategory" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
+              <option value="সর্বশেষ">সর্বশেষ</option>
+              <option value="মাইজদী">মাইজদী</option>
+              <option value="চৌমুহনী">চৌমুহনী</option>
+              <option value="সুবর্ণচর">সুবর্ণচর</option>
+              <option value="কোম্পানীগঞ্জ">কোম্পানীগঞ্জ</option>
+              <option value="বেগমগঞ্জ">বেগমগঞ্জ</option>
+              <option value="রাজনীতি">রাজনীতি</option>
+              <option value="অপরাধ">অপরাধ</option>
+              <option value="ক্যাম্পাস">ক্যাম্পাস</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-zinc-300 mb-1">প্রতিবেদক</label>
+            <input type="text" id="postReporter" placeholder="নিজস্ব প্রতিবেদক" value="নিজস্ব প্রতিবেদক" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-zinc-300 mb-1">মোবাইল থেকে ৪:৫ পোস্টার ছবি সিলেক্ট করুন *</label>
+          <input type="file" id="postImageFile" accept="image/*" required onchange="previewPublishImage(event)" class="w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-emerald-950 file:text-emerald-400 hover:file:bg-emerald-900 cursor-pointer">
+          <div id="publishImagePreview" class="mt-2.5 hidden aspect-[4/5] max-w-[180px] bg-zinc-800 rounded-lg overflow-hidden border border-zinc-700">
+            <img id="publishImgTag" src="" class="w-full h-full object-cover">
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-zinc-300 mb-1">বিস্তারিত সংবাদ প্রতিবেদন *</label>
+          <textarea id="postContent" rows="6" required placeholder="এখানে পুরো খবর বিস্তারিত লিখুন..." class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500"></textarea>
+        </div>
+
+        <div class="flex items-center gap-2 pt-2">
+          <button type="submit" class="flex-1 bg-brand-green hover:bg-emerald-700 text-white font-bold py-3 rounded-lg text-sm shadow-lg transition">
+            🚀 এখনই লাইভ প্রকাশ করুন
+          </button>
+          <button type="button" onclick="toggleModal('adminPublishPanel')" class="px-4 py-3 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg text-sm font-bold">
+            বন্ধ করুন
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- কপি টোস্ট -->
   <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-2xl opacity-0 pointer-events-none transition-all duration-300 z-50">
-    লিংক কপি করা হয়েছে!
+    <span id="toastMsg">কপি করা হয়েছে!</span>
   </div>
 
   <script>
-    function toggleModal() {
-      document.getElementById('submissionModal').classList.toggle('hidden');
+    // ডেমো ডাটা স্টোরেজ
+    let newsArticles = [
+      {
+        id: 1,
+        title: "নোয়াখালীতে আধুনিক যোগাযোগ ব্যবস্থার নতুন মাইলফলক: চার লেনের সংযোগ সড়ক চালু",
+        category: "মাইজদী",
+        reporter: "নিজস্ব প্রতিবেদক, নোয়াখালী",
+        time: "১৫ মিনিট আগে",
+        image: "https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?w=800&auto=format&fit=crop&q=80",
+        summary: "মাইজদী থেকে চৌমুহনী পর্যন্ত সড়কের উন্নয়ন কাজ দ্রুত শেষ হয়েছে। সড়ক পরিবহন কর্তৃপক্ষের তথ্যমতে, আগামী মাসের শুরুতেই এটি সাধারণ যানবাহনের জন্য সম্পূর্ণ উন্মুক্ত করে দেওয়া হবে...",
+        body: "মাইজদী থেকে চৌমুহনী পর্যন্ত সড়কের উন্নয়ন কাজ দ্রুত শেষ হয়েছে। সড়ক পরিবহন কর্তৃপক্ষের তথ্যমতে, আগামী মাসের শুরুতেই এটি সাধারণ যানবাহনের জন্য সম্পূর্ণ উন্মুক্ত করে দেওয়া হবে।\n\nপ্রকল্প পরিচালক জানিয়েছেন, এই সড়কে আধুনিক ড্রেনেজ ব্যবস্থা ও ডিভাইডারের পাশে লাইটিং স্থাপন করা হয়েছে। সবচেয়ে বড় পরিবর্তন এসেছে সোনাপুর-চৌমুহনী সংযোগ মোড়ে, যেখানে পূর্বে প্রতিদিন ঘণ্টার পর ঘণ্টা যানজট লেগে থাকত।\n\nস্থানীয় ব্যবসায়ীরা জানিয়েছেন, সড়কটি সম্পূর্ণ চালু হলে পণ্য পরিবহনে সময় অর্ধেকে নেমে আসবে এবং জেলার অভ্যন্তরীণ ব্যবসা-বাণিজ্যে নতুন গতি সঞ্চার হবে।"
+      }
+    ];
+
+    let currentSelectedNews = newsArticles[0];
+
+    function toggleModal(id) {
+      document.getElementById(id).classList.toggle('hidden');
     }
-    function openNewsModal() {
-      document.getElementById('newsDetailModal').classList.remove('hidden');
-    }
-    function closeNewsModal() {
-      document.getElementById('newsDetailModal').classList.add('hidden');
-    }
-    function copyCurrentLink() {
-      navigator.clipboard.writeText(window.location.href);
+
+    function showToast(msg) {
       const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.innerText = msg;
       toast.classList.remove('opacity-0');
-      setTimeout(() => toast.classList.add('opacity-0'), 2000);
+      setTimeout(() => toast.classList.add('opacity-0'), 2200);
     }
-    function handleSubmit(e) {
+
+    // নিউজ বিস্তারিত ওপেন করা
+    function showNewsDetail(id) {
+      const news = newsArticles.find(n => n.id === id);
+      if(!news) return;
+      currentSelectedNews = news;
+
+      document.getElementById('modalHeadline').innerText = news.title;
+      document.getElementById('modalCategory').innerText = news.category;
+      document.getElementById('modalReporter').innerText = news.reporter;
+      document.getElementById('modalTime').innerText = news.time;
+      document.getElementById('modalImage').src = news.image;
+      document.getElementById('modalBody').innerText = news.body;
+
+      toggleModal('newsDetailModal');
+    }
+
+    // ১. শুধু লিংক কপি
+    function copyOnlyLink() {
+      navigator.clipboard.writeText(window.location.href);
+      showToast('🔗 নিউজের লিংক কপি করা হয়েছে!');
+    }
+
+    // ২. পুরো নিউজ কপি
+    function copyFullNews() {
+      if(!currentSelectedNews) return;
+      const text = `${currentSelectedNews.title}\n(${currentSelectedNews.reporter})\n\n${currentSelectedNews.body}\n\n— আরও পড়ুন: নোয়াখালী এক্সপ্রেস (${window.location.href})`;
+      navigator.clipboard.writeText(text);
+      showToast('📋 পুরো নিউজ টেক্সট কপি করা হয়েছে!');
+    }
+
+    // লেখা জমা দেওয়ার ছবি প্রিভিউ (৩টি পর্যন্ত)
+    function previewCitizenImages(event) {
+      const container = document.getElementById('citizenImagePreviews');
+      container.innerHTML = '';
+      const files = event.target.files;
+      if (files.length > 3) {
+        alert('সর্বোচ্চ ৩টি ছবি নির্বাচন করতে পারবেন।');
+        event.target.value = '';
+        return;
+      }
+      Array.from(files).forEach(file => {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const img = document.createElement('img');
+          img.src = e.target.result;
+          img.className = 'w-16 h-16 object-cover rounded-lg border border-zinc-700 shrink-0';
+          container.appendChild(img);
+        };
+        reader.readAsDataURL(file);
+      });
+    }
+
+    // নাগরিক লেখা সাবমিশন
+    function handleCitizenSubmission(e) {
       e.preventDefault();
-      alert('আপনার লেখাটি সফলভাবে জমা হয়েছে! সম্পাদক কর্তৃক অনুমোদিত হলে আপনার হোয়াটসঅ্যাপে লিংক পাঠিয়ে দেওয়া হবে।');
-      toggleModal();
+      const filesCount = document.getElementById('subImages').files.length;
+      alert(`ধন্যবাদ! আপনার লেখা এবং ${filesCount}টি ছবি আমাদের কাছে সফলভাবে জমা হয়েছে। যাচাই শেষে আপনার হোয়াটসঅ্যাপে লিংক পৌঁছে যাবে।`);
+      toggleModal('submissionModal');
+      e.target.reset();
+      document.getElementById('citizenImagePreviews').innerHTML = '';
+    }
+
+    // অ্যাডমিন লগইন চেকিং (ডিফল্ট: admin / 123456)
+    function openAdmin() {
+      const isLogged = localStorage.getItem('noakhali_admin_logged');
+      if (isLogged === 'true') {
+        toggleModal('adminPublishPanel');
+      } else {
+        toggleModal('adminLoginModal');
+      }
+    }
+
+    function handleAdminLogin(e) {
+      e.preventDefault();
+      const u = document.getElementById('adminUser').value;
+      const p = document.getElementById('adminPass').value;
+
+      // আপনি চাইলে পরে এই পাসওয়ার্ড পরিবর্তন করতে পারেন
+      if (u === 'admin' && p === '123456') {
+        localStorage.setItem('noakhali_admin_logged', 'true');
+        toggleModal('adminLoginModal');
+        toggleModal('adminPublishPanel');
+        showToast('লগইন সফল হয়েছে!');
+      } else {
+        alert('ভুল ইউজারনেম বা পাসওয়ার্ড! অনুগ্রহ করে আবার চেষ্টা করুন।');
+      }
+    }
+
+    function logoutAdmin() {
+      localStorage.removeItem('noakhali_admin_logged');
+      toggleModal('adminPublishPanel');
+      showToast('লগআউট করা হয়েছে');
+    }
+
+    // মোবাইল থেকে আপলোড করা ছবির প্রিভিউ
+    let currentUploadedImageUrl = '';
+    function previewPublishImage(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          currentUploadedImageUrl = evt.target.result;
+          document.getElementById('publishImgTag').src = currentUploadedImageUrl;
+          document.getElementById('publishImagePreview').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    // মোবাইল থেকেই ডাইরেক্ট নিউজ পাবলিশ করা
+    function handleDirectPublish(e) {
+      e.preventDefault();
+      const title = document.getElementById('postTitle').value;
+      const category = document.getElementById('postCategory').value;
+      const reporter = document.getElementById('postReporter').value || 'নিজস্ব প্রতিবেদক';
+      const body = document.getElementById('postContent').value;
+      const image = currentUploadedImageUrl || 'https://images.unsplash.com/photo-1585829365295-ab7cd400c167?w=800';
+
+      const newId = Date.now();
+      const newArticle = {
+        id: newId,
+        title: title,
+        category: category,
+        reporter: reporter,
+        time: 'এইমাত্র প্রকাশিত',
+        image: image,
+        summary: body.substring(0, 140) + '...',
+        body: body
+      };
+
+      // লিস্টের শুরুতে যুক্ত করা
+      newsArticles.unshift(newArticle);
+
+      // DOM-এ নতুন কার্ড রেন্ডার করা
+      const feed = document.getElementById('newsFeedContainer');
+      const articleEl = document.createElement('article');
+      articleEl.className = 'bg-zinc-950 border border-zinc-800 rounded-xl overflow-hidden shadow-xl animate-fade-in';
+      articleEl.innerHTML = `
+        <div class="p-4">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="text-[11px] font-bold px-2 py-0.5 rounded-full bg-emerald-950 text-emerald-400 border border-emerald-800">${category}</span>
+            <span class="text-[11px] text-zinc-400">• এইমাত্র প্রকাশিত</span>
+          </div>
+          <h2 class="text-xl sm:text-2xl text-white leading-snug cursor-pointer hover:text-emerald-400 transition" onclick="showNewsDetail(${newId})">
+            ${title}
+          </h2>
+          <p class="text-base text-zinc-300 mt-2 leading-relaxed">
+            ${newArticle.summary}
+            <button onclick="showNewsDetail(${newId})" class="text-emerald-400 font-bold ml-1 hover:underline">...বিস্তারিত পড়ুন</button>
+          </p>
+        </div>
+        <div class="aspect-[4/5] bg-zinc-900 w-full overflow-hidden cursor-pointer" onclick="showNewsDetail(${newId})">
+          <img src="${image}" alt="News Image" class="w-full h-full object-cover">
+        </div>
+        <div class="p-3 bg-zinc-900/60 border-t border-zinc-800/80 flex items-center justify-between text-xs text-zinc-400">
+          <span class="flex items-center gap-1.5"><i class="ph ph-clock"></i> এইমাত্র</span>
+          <button onclick="copyOnlyLink()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-200 transition">
+            <i class="ph ph-link-simple text-sm"></i>
+            <span>কপি লিংক</span>
+          </button>
+        </div>
+      `;
+
+      feed.insertBefore(articleEl, feed.firstChild);
+
+      alert('অভিনন্দন! নিউজটি সফলভাবে ওয়েবসাইটে লাইভ হয়ে গেছে!');
+      toggleModal('adminPublishPanel');
+      e.target.reset();
+      document.getElementById('publishImagePreview').classList.add('hidden');
+      currentUploadedImageUrl = '';
     }
   </script>
 </body>
