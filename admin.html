@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="bn" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>নোয়াখালী এক্সপ্রেস | নিউজরুম অ্যাডমিন ড্যাশবোর্ড</title>
+  
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+  
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: { red: '#E22128', green: '#1E824C' }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    @font-face {
+      font-family: 'EkusheyLalsalu';
+      src: url('fonts/EkusheyLalsalu-Regular.ttf') format('truetype');
+      font-weight: normal;
+    }
+    @font-face {
+      font-family: 'EkusheyLalsalu';
+      src: url('fonts/EkusheyLalsalu-Bold.ttf') format('truetype');
+      font-weight: bold;
+    }
+    @font-face {
+      font-family: 'Shurjo';
+      src: url('fonts/Shurjo.ttf') format('truetype');
+      font-weight: normal;
+    }
+
+    body, input, textarea, select, button {
+      font-family: 'EkusheyLalsalu', sans-serif !important;
+    }
+
+    .font-headline {
+      font-family: 'Shurjo', sans-serif !important;
+    }
+  </style>
+</head>
+<body class="bg-zinc-950 text-slate-100 min-h-screen antialiased selection:bg-brand-red selection:text-white flex flex-col md:flex-row">
+
+  <!-- লগইন গার্ড স্ক্রিন (পাসওয়ার্ড ছাড়া কিছু দেখা যাবে না) -->
+  <div id="loginGate" class="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4">
+    <div class="bg-zinc-900 border border-zinc-800 rounded-2xl w-full max-w-sm p-6 text-center shadow-2xl">
+      <div class="w-14 h-14 rounded-full bg-emerald-950/60 border border-emerald-800/60 text-emerald-400 flex items-center justify-center mx-auto text-2xl mb-4">
+        <i class="ph ph-shield-check"></i>
+      </div>
+      <h2 class="text-xl font-bold font-headline">নোয়াখালী এক্সপ্রেস নিউজরুম</h2>
+      <p class="text-xs text-zinc-400 mt-1">শুধুমাত্র দায়িত্বপ্রাপ্ত সম্পাদক ও সাংবাদিকদের জন্য</p>
+
+      <form onsubmit="handleGateLogin(event)" class="mt-5 space-y-3 text-left text-xs sm:text-sm">
+        <div>
+          <label class="block text-zinc-400 mb-1">নিউজ আইডি / ইউজারনেম</label>
+          <input type="text" id="gateUser" required placeholder="admin" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+        <div>
+          <label class="block text-zinc-400 mb-1">সিক্রেট পাসওয়ার্ড</label>
+          <input type="password" id="gatePass" required placeholder="••••••••" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-2.5 text-white focus:outline-none focus:border-emerald-500">
+        </div>
+        <button type="submit" class="w-full bg-brand-green hover:bg-emerald-700 text-white font-bold py-2.5 rounded-lg transition mt-2">
+          নিউজরুমে প্রবেশ করুন
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ১. প্রফেশনাল সাইডবার (মোবাইলে নিচে / ট্যাবলেটে বামে) -->
+  <aside class="w-full md:w-64 bg-zinc-900 border-r border-zinc-800 flex flex-col shrink-0">
+    <div class="p-4 border-b border-zinc-800 flex items-center justify-between">
+      <div class="flex items-center gap-2">
+        <span class="w-3 h-3 rounded-full bg-brand-red animate-pulse"></span>
+        <span class="font-bold text-sm tracking-wide">NEWSROOM CMS</span>
+      </div>
+      <button onclick="logoutGate()" class="text-zinc-400 hover:text-red-400 text-sm" title="লগআউট">
+        <i class="ph ph-sign-out text-lg"></i>
+      </button>
+    </div>
+
+    <!-- সাইডবার ন্যাভিগেশন মেনু -->
+    <nav class="p-3 space-y-1 flex-1 text-sm">
+      <button onclick="switchTab('publishTab')" id="nav-publish" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-zinc-800 text-white font-bold transition">
+        <i class="ph ph-pencil-line text-lg text-emerald-400"></i>
+        <span>নতুন খবর প্রকাশ</span>
+      </button>
+      <button onclick="switchTab('manageTab')" id="nav-manage" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-zinc-400 hover:bg-zinc-800/60 hover:text-white transition">
+        <i class="ph ph-newspaper text-lg text-blue-400"></i>
+        <span>প্রকাশিত সংবাদ তালিকা</span>
+      </button>
+      <button onclick="switchTab('submissionsTab')" id="nav-submissions" class="w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-zinc-400 hover:bg-zinc-800/60 hover:text-white transition">
+        <div class="flex items-center gap-2.5">
+          <i class="ph ph-tray text-lg text-amber-400"></i>
+          <span>নাগরিক ইনবক্স</span>
+        </div>
+        <span class="text-[10px] font-bold bg-amber-500/20 text-amber-300 px-2 py-0.5 rounded-full">২টি নতুন</span>
+      </button>
+      <button onclick="switchTab('tickerTab')" id="nav-ticker" class="w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-zinc-400 hover:bg-zinc-800/60 hover:text-white transition">
+        <i class="ph ph-broadcast text-lg text-red-500"></i>
+        <span>ব্রেকিং টিকার নিয়ন্ত্রণ</span>
+      </button>
+    </nav>
+
+    <!-- বর্তমান ওয়েবসাইট লিংক প্রিভিউ -->
+    <div class="p-4 border-t border-zinc-800 bg-zinc-950/40 text-xs">
+      <div class="text-zinc-400">লাইভ পোর্টাল:</div>
+      <a href="index.html" target="_blank" class="text-emerald-400 font-bold flex items-center gap-1 mt-1 hover:underline">
+        <span>নোয়াখালী এক্সপ্রেস হোম</span>
+        <i class="ph ph-arrow-square-out text-sm"></i>
+      </a>
+    </div>
+  </aside>
+
+  <!-- ২. মূল ওয়ার্কস্পেস -->
+  <main class="flex-1 p-4 md:p-8 overflow-y-auto max-w-5xl">
+
+    <!-- ট্যাব ১: নতুন নিউজ প্রকাশ (BBC/Star স্টাইল এডিটর) -->
+    <section id="publishTab" class="space-y-6">
+      <div class="flex items-center justify-between border-b border-zinc-800 pb-4">
+        <div>
+          <h1 class="text-xl md:text-2xl font-bold font-headline text-white">তাজা সংবাদ প্রকাশনা</h1>
+          <p class="text-xs text-zinc-400 mt-1">শিরোনাম ও ৪:৫ পোস্টার ছবি যুক্ত করে ১-ক্লিকে পাবলিশ করুন</p>
+        </div>
+        <span class="text-xs px-3 py-1 bg-emerald-950 border border-emerald-800 text-emerald-400 rounded-full font-bold">অনলাইন ড্রাফট রেডি</span>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- বাম পাশের এডিটর -->
+        <div class="lg:col-span-2 space-y-4">
+          <div>
+            <label class="block text-xs text-zinc-300 mb-1 font-bold">সংবাদের শিরোনাম (হেডলাইন) *</label>
+            <input type="text" id="edHeadline" placeholder="স্পষ্ট ও আকর্ষণীয় শিরোনাম লিখুন..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-3 text-white text-base md:text-lg focus:outline-none focus:border-emerald-500 font-headline" oninput="updateLivePreview()">
+          </div>
+
+          <div class="grid grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs text-zinc-300 mb-1">ক্যাটাগরি / বিট *</label>
+              <select id="edCategory" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-emerald-500" onchange="updateLivePreview()">
+                <option value="সর্বশেষ">সর্বশেষ</option>
+                <option value="মাইজদী">মাইজদী</option>
+                <option value="চৌমুহনী">চৌমুহনী</option>
+                <option value="সুবর্ণচর">সুবর্ণচর</option>
+                <option value="কোম্পানীগঞ্জ">কোম্পানীগঞ্জ</option>
+                <option value="বেগমগঞ্জ">বেগমগঞ্জ</option>
+                <option value="রাজনীতি">রাজনীতি</option>
+                <option value="অপরাধ">অপরাধ</option>
+                <option value="ক্যাম্পাস">ক্যাম্পাস</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-zinc-300 mb-1">বাই-লাইন / প্রতিবেদক</label>
+              <input type="text" id="edReporter" value="নিজস্ব প্রতিবেদক, নোয়াখালী" class="w-full bg-zinc-900 border border-zinc-700 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-emerald-500">
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-xs text-zinc-300 mb-1 font-bold">বিস্তারিত সংবাদ প্রতিবেদন *</label>
+            <textarea id="edBody" rows="10" placeholder="এখানে পূর্ণাঙ্গ প্রতিবেদনটি প্যারাগ্রাফ আকারে সাজিয়ে লিখুন..." class="w-full bg-zinc-900 border border-zinc-700 rounded-xl p-3 text-white text-sm leading-relaxed focus:outline-none focus:border-emerald-500" oninput="updateLivePreview()"></textarea>
+          </div>
+        </div>
+
+        <!-- ডান পাশের প্রিভিউ ও ইমেজ কন্ট্রোল -->
+        <div class="space-y-4">
+          <div class="bg-zinc-900 border border-zinc-800 rounded-xl p-4">
+            <label class="block text-xs text-zinc-300 mb-1 font-bold">৪:৫ পোস্টার ছবি আপলোড *</label>
+            <input type="file" id="edImageFile" accept="image/*" class="w-full text-xs text-zinc-400 file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-bold file:bg-zinc-800 file:text-emerald-400 hover:file:bg-zinc-700 cursor-pointer" onchange="handleImageSelect(event)">
+            
+            <!-- লাইভ মোবাইল ভিউ প্রিভিউ -->
+            <div class="mt-4 border border-zinc-800 rounded-lg p-2 bg-black">
+              <span class="text-[10px] text-zinc-400 block mb-1">মোবাইল ফিড লাইভ প্রিভিউ:</span>
+              <div class="aspect-[4/5] bg-zinc-800 rounded-md overflow-hidden relative">
+                <img id="liveImgPreview" src="https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?w=800" class="w-full h-full object-cover">
+                <span id="liveCategoryBadge" class="absolute top-2 left-2 bg-emerald-600 text-white text-[10px] font-bold px-2 py-0.5 rounded shadow">সর্বশেষ</span>
+              </div>
+              <h4 id="liveTitlePreview" class="text-xs font-bold text-white mt-2 line-clamp-2 font-headline">শিরোনাম এখানে দেখা যাবে...</h4>
+            </div>
+          </div>
+
+          <button onclick="publishNewsArticle()" class="w-full py-3.5 bg-brand-green hover:bg-emerald-700 text-white font-bold rounded-xl shadow-lg transition flex items-center justify-center gap-2">
+            <i class="ph ph-rocket-launch text-lg"></i>
+            <span>ওয়েবসাইটে প্রকাশ করুন</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ট্যাব ২: প্রকাশিত সংবাদ তালিকা -->
+    <section id="manageTab" class="hidden space-y-4">
+      <div class="border-b border-zinc-800 pb-3 flex justify-between items-center">
+        <h2 class="text-lg font-bold font-headline">প্রকাশিত সকল সংবাদ</h2>
+        <span class="text-xs text-zinc-400">সর্বমোট: ৩টি সংবাদ</span>
+      </div>
+      <div class="space-y-3">
+        <div class="bg-zinc-900 border border-zinc-800 p-4 rounded-xl flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-12 h-14 bg-zinc-800 rounded-md overflow-hidden shrink-0">
+              <img src="https://images.unsplash.com/photo-1541888946425-d0fbb186c5f7?w=800" class="w-full h-full object-cover">
+            </div>
+            <div>
+              <h4 class="text-sm font-bold text-white font-headline">নোয়াখালীতে আধুনিক যোগাযোগ ব্যবস্থার নতুন মাইলফলক</h4>
+              <p class="text-xs text-zinc-400 mt-0.5">মাইজদী • ১৫ মিনিট আগে প্রকাশিত</p>
+            </div>
+          </div>
+          <div class="flex items-center gap-2">
+            <button class="p-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-zinc-300" title="এডিট"><i class="ph ph-pencil-simple"></i></button>
+            <button class="p-2 bg-red-950/60 hover:bg-red-900 border border-red-800 text-red-400 rounded-lg" title="মুছে ফেলুন"><i class="ph ph-trash"></i></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ট্যাব ৩: নাগরিক ইনবক্স (Submissions) -->
+    <section id="submissionsTab" class="hidden space-y-4">
+      <div class="border-b border-zinc-800 pb-3">
+        <h2 class="text-lg font-bold font-headline">নাগরিক সাংবাদিকদের প্রেরিত লেখা ও ছবি</h2>
+        <p class="text-xs text-zinc-400 mt-0.5">পাঠকদের পাঠানো লেখা যাচাই করে এক ক্লিকে নিউজে রূপান্তর করুন</p>
+      </div>
+
+      <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-3">
+        <div class="flex justify-between items-start">
+          <div>
+            <h3 class="font-bold text-base text-white">কোম্পানীগঞ্জে জলাবদ্ধতায় ৩ গ্রামের মানুষ পানিবন্দি</h3>
+            <p class="text-xs text-emerald-400 mt-0.5">প্রেরক: রাশেদুল ইসলাম • হোয়াটসঅ্যাপ: 018XXXXXXXX</p>
+          </div>
+          <span class="text-[10px] bg-amber-500/20 text-amber-300 px-2.5 py-1 rounded-full font-bold">অপেক্ষমান</span>
+        </div>
+        <p class="text-xs text-zinc-300 leading-relaxed bg-zinc-950 p-3 rounded-lg border border-zinc-800">
+          গত দুই দিনের টানা বৃষ্টিতে কোম্পানীগঞ্জের চর এলাহী ইউনিয়নে ড্রেনেজ ব্যবস্থা বন্ধ থাকায় প্রায় ৩টি গ্রামের কয়েক শত পরিবার এখন পানিবন্দি অবস্থায় দিন কাটাচ্ছেন...
+        </p>
+        <div class="flex items-center gap-2">
+          <div class="w-14 h-14 bg-zinc-800 rounded-lg border border-zinc-700 overflow-hidden">
+            <img src="https://images.unsplash.com/photo-1547683905-f686c993aae5?w=500" class="w-full h-full object-cover">
+          </div>
+        </div>
+        <div class="flex items-center gap-2 pt-2 border-t border-zinc-800">
+          <button class="px-4 py-2 bg-brand-green hover:bg-emerald-700 text-white rounded-lg text-xs font-bold transition">
+            অনুমোদন ও প্রকাশ করুন
+          </button>
+          <button class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 text-zinc-300 rounded-lg text-xs">
+            হোয়াটসঅ্যাপে মেসেজ পাঠান
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ট্যাব ৪: ব্রেকিং টিকার নিয়ন্ত্রণ -->
+    <section id="tickerTab" class="hidden space-y-4">
+      <div class="border-b border-zinc-800 pb-3">
+        <h2 class="text-lg font-bold font-headline">হেডার ব্রেকিং টিকার কন্ট্রোল</h2>
+        <p class="text-xs text-zinc-400 mt-0.5">ওয়েবসাইটের উপরের লাল স্ক্রোলিং বারটি আপডেট করুন</p>
+      </div>
+      <div class="bg-zinc-900 border border-zinc-800 p-5 rounded-xl space-y-3">
+        <label class="block text-xs text-zinc-300 font-bold">টিকার হেডলাইনসমূহ (বুলেট দিয়ে আলাদা করুন)</label>
+        <textarea rows="4" class="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 text-sm text-white focus:outline-none focus:border-red-500">নোয়াখালীর সকল সংবাদ এক্সপ্রেস গতিতে পেতে যুক্ত থাকুন আমাদের সাথে • মাইজদীতে নতুন সড়ক উন্নয়ন প্রকল্পের কাজ দ্রুত এগিয়ে চলছে • কোম্পানীগঞ্জে কৃষকদের মাঝে বিনামূল্যে সার ও বীজ বিতরণ</textarea>
+        <button onclick="alert('টিকার সফলভাবে আপডেট হয়েছে!')" class="px-5 py-2.5 bg-brand-red hover:bg-red-700 text-white text-xs font-bold rounded-lg transition">
+          টিকার আপডেট করুন
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // সিকিউরিটি গেট চেকিং
+    function handleGateLogin(e) {
+      e.preventDefault();
+      const u = document.getElementById('gateUser').value;
+      const p = document.getElementById('gatePass').value;
+      if (u === 'admin' && p === '123456') {
+        document.getElementById('loginGate').classList.add('hidden');
+        sessionStorage.setItem('newsroom_auth', 'true');
+      } else {
+        alert('ভুল সিক্রেট ক্রিডেনশিয়ালস!');
+      }
+    }
+
+    function logoutGate() {
+      sessionStorage.removeItem('newsroom_auth');
+      window.location.reload();
+    }
+
+    // ট্যাব পরিবর্তন
+    function switchTab(tabId) {
+      ['publishTab', 'manageTab', 'submissionsTab', 'tickerTab'].forEach(t => {
+        document.getElementById(t).classList.add('hidden');
+      });
+      document.getElementById(tabId).classList.remove('hidden');
+
+      // বাটন কালার আপডেট
+      ['publish', 'manage', 'submissions', 'ticker'].forEach(btn => {
+        const el = document.getElementById('nav-' + btn);
+        el.className = el.className.replace('bg-zinc-800 text-white font-bold', 'text-zinc-400');
+      });
+      const activeBtn = document.getElementById('nav-' + tabId.replace('Tab', ''));
+      activeBtn.className = 'w-full flex items-center gap-2.5 px-3 py-2.5 rounded-lg bg-zinc-800 text-white font-bold transition';
+    }
+
+    // লাইভ প্রিভিউ হ্যান্ডলার
+    function updateLivePreview() {
+      const h = document.getElementById('edHeadline').value;
+      const c = document.getElementById('edCategory').value;
+      if (h) document.getElementById('liveTitlePreview').innerText = h;
+      document.getElementById('liveCategoryBadge').innerText = c;
+    }
+
+    let selectedImgData = '';
+    function handleImageSelect(e) {
+      const file = e.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(evt) {
+          selectedImgData = evt.target.result;
+          document.getElementById('liveImgPreview').src = selectedImgData;
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function publishNewsArticle() {
+      const title = document.getElementById('edHeadline').value;
+      const body = document.getElementById('edBody').value;
+      if (!title || !body) {
+        alert('অনুগ্রহ করে শিরোনাম ও প্রতিবেদন সম্পূর্ণ লিখুন।');
+        return;
+      }
+      alert('সংবাদটি সফলভাবে পাবলিশিং কিউতে যুক্ত করা হয়েছে!');
+    }
+
+    window.onload = function() {
+      if (sessionStorage.getItem('newsroom_auth') === 'true') {
+        document.getElementById('loginGate').classList.add('hidden');
+      }
+    };
+  </script>
+</body>
+</html>
